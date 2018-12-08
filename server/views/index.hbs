@@ -6,9 +6,8 @@
 
 <script type="text/javascript">
 
-
-
     var ctx = document.getElementById('myChart').getContext('2d');
+    var mostRecentData;
 
     grdBlue = ctx.createLinearGradient(150.000, 0.000, 150.000, 300.000);
 
@@ -20,9 +19,12 @@
     grdOrange.addColorStop(0.000, 'rgba(255, 116, 53, 1.000)');
     grdOrange.addColorStop(1.000, 'rgba(255, 116, 53, 0.200)');
 
+    var chart;
+
     $.get('data', (data) => {
+        mostRecentData = data;
         console.log(data);
-        var chart = new Chart(ctx, {
+        chart = new Chart(ctx, {
             // The type of chart we want to create
             type: 'line',
 
@@ -34,12 +36,14 @@
                     backgroundColor: grdBlue,
                     borderColor: '#00A5FF',
                     borderWidth: 0.1,
+                    pointRadius: 1,
                     data: data.noVestaArray,
                 }, {
                     label: "My Second dataset",
                     backgroundColor: grdOrange,
                     borderColor: '#FF7435',
                     borderWidth: 0.1,
+                    pointRadius: 1,
                     data: data.hasVestaArray,
                 }]
             },
@@ -49,7 +53,7 @@
                 scales: {
                     xAxes: [{
                         ticks: {
-                            stepSize: 100
+                            maxTicksLimit: 10
                         }
                     }]
                 }
@@ -57,5 +61,22 @@
         });
 
     })
+
+    function addData(chart, label, noVesta, hasVesta) {
+        chart.data.labels.push(label);
+        chart.data.datasets[0].data.push(noVesta);
+        chart.data.datasets[1].data.push(hasVesta);
+        chart.update();
+    }
+
+    setInterval(() => {
+
+        $.get('data', (data) => {
+            if (data.timeArray[data.timeArray.length - 1] != mostRecentData.timeArray[data.timeArray.length - 1]) {
+                addData(chart, 30, data.noVestaArray[data.noVestaArray.length - 1], data.hasVestaArray[data.hasVestaArray.length - 1])
+                mostRecentData = data;
+            }
+        })
+    }, 500);
 
 </script>
