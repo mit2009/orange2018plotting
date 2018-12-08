@@ -14,6 +14,9 @@ router.get('/', function (req, res, next) {
 
 router.get('/data', function (req, res, next) {
     let jsonData = []
+    let timeArray = [];
+    let noVestaArray = [];
+    let hasVestaArray = [];
     csv()
         .fromFile(csvFilePath)
         .then((jsonObj) => {
@@ -23,8 +26,16 @@ router.get('/data', function (req, res, next) {
                     noVesta: i[noVesta],
                     hasVesta: i[hasVesta]
                 })
+                timeArray.push(i[time])
+                noVestaArray.push(i[noVesta])
+                hasVestaArray.push(i[hasVesta])
             }
-            res.json(jsonData);
+            // jsonData unused
+            res.json({
+                timeArray,
+                noVestaArray,
+                hasVestaArray
+            });
         })
 
 })
