@@ -1,8 +1,17 @@
 var express = require('express');
 var router = express.Router();
-var csv = require('csvtojson')
+var csv = require('csvtojson');
+var convert = require('xml-js');
+var fs = require('fs');
 
 const csvFilePath = '../Orange final presentation test.csv'
+
+
+const cmblFilePath = '../asdf.cmbl';
+
+var timeColumnName = "Time";
+var noVestaColumnName = "Temperature";
+var hasVestaColumnName = "Temperature 2";
 
 const time = 'Latest: Time (s)';
 const noVesta = 'Latest: No Vesta (°C)';
@@ -13,30 +22,96 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/data', function (req, res, next) {
-    let jsonData = []
+    let jsonData = [];
     let timeArray = [];
     let noVestaArray = [];
     let hasVestaArray = [];
-    csv()
-        .fromFile(csvFilePath)
-        .then((jsonObj) => {
-            for (i of jsonObj) {
-                jsonData.push({
-                    time: i[time],
-                    noVesta: i[noVesta],
-                    hasVesta: i[hasVesta]
-                })
-                timeArray.push(i[time])
-                noVestaArray.push(i[noVesta])
-                hasVestaArray.push(i[hasVesta])
-            }
-            // jsonData unused
-            res.json({
-                timeArray,
-                noVestaArray,
-                hasVestaArray
-            });
-        })
+
+    // parse from csv, courtesy of victor. we're now directly parsing the cmbl
+    // csv()
+    //     .fromFile(csvFilePath)
+    //     .then((jsonObj) => {
+    //         for (i of jsonObj) {
+    //             jsonData.push({
+    //                 time: i[time],
+    //                 noVesta: i[noVesta],
+    //                 hasVesta: i[hasVesta]
+    //             })
+    //             timeArray.push(i[time])
+    //             noVestaArray.push(i[noVesta])
+    //             hasVestaArray.push(i[hasVesta])
+    //         }
+    //         // jsonData unused
+    //         res.json({
+    //             timeArray,
+    //             noVestaArray,
+    //             hasVestaArray
+    //         });
+    //     })
+    var cmblFile = fs.readFileSync(cmblFilePath, 'utf8');
+    // console.log(cmblFile);
+    console.log("parsed cmbl");
+    var cmblJson = convert.xml2js(cmblFile, {compact: true, spaces: 4});
+    console.log("parsed json");
+    var data = cmblJson['Document']['DataSet']['DataColumn'];
+    console.log("got data");
+    console.log(data.length);
+    for (var entry in data) {
+        element = data[entry];
+        console.log('got a new element');
+        // console.log(element);//['DataObjectName']['_text']);
+        switch (element['DataObjectName']['_text']) {
+            case timeColumnName:
+                console.log("got time");
+                timeArray = element['ColumnCells']['_text'].split('\n').slice(1,-1);
+                break;
+            case noVestaColumnName:
+                console.log("got temp");
+                noVestaArray = element['ColumnCells']['_text'].split('\n').slice(1,-1);
+                break;
+            case hasVestaColumnName:
+                console.log("got temp2");
+                hasVestaArray = element['ColumnCells']['_text'].split('\n').slice(1,-1);
+                break;
+            default:
+                console.log("got nothing");
+                break;
+        }
+    }
+
+    console.log(timeArray);
+    console.log(noVestaArray);
+    console.log(hasVestaArray);
+
+    res.json({
+        timeArray,
+        noVestaArray,
+        hasVestaArray
+    });
+
+    // ['ColumnCells']['_text'].split('\n');
+    // var time = cmblJson['Document']...['ColumnCells'];
+
+    // csv()
+    //     .fromFile(csvFilePath)
+    //     .then((jsonObj) => {
+    //         for (i of jsonObj) {
+    //             jsonData.push({
+    //                 time: i[time],
+    //                 noVesta: i[noVesta],
+    //                 hasVesta: i[hasVesta]
+    //             })
+    //             timeArray.push(i[time])
+    //             noVestaArray.push(i[noVesta])
+    //             hasVestaArray.push(i[hasVesta])
+    //         }
+    //         // jsonData unused
+    //         res.json({
+    //             timeArray,
+    //             noVestaArray,
+    //             hasVestaArray
+    //         });
+    //     })
 
 })
 
