@@ -1,10 +1,28 @@
+/**
+
+To make this work:
+- you need automator and loggerpro running, with loggerpro on the right half
+  and automator on the left.
+- get loggerpro to start recording (make sure it's set to record forever), and hit save as,
+  making sure that it writes to the filename corresponding to cmblFilePath.
+- Also make sure that the column names continue to match the appropriate variables.
+- run npm start
+- open localhost:3000
+- make sure it's showing the thing you want
+- run automator and make sure that it's doing the thing you want it to do
+- watch the log in either chrome debugger or terminal to ensure it's doing what you want (num increasing)
+
+*/
+
+
+
 var express = require('express');
 var router = express.Router();
-var csv = require('csvtojson');
+// var csv = require('csvtojson');
 var convert = require('xml-js');
 var fs = require('fs');
 
-const csvFilePath = '../Orange final presentation test.csv'
+// const csvFilePath = '../Orange final presentation test.csv'
 
 
 const cmblFilePath = '../asdf.cmbl';
