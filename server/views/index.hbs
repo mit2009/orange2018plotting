@@ -26,12 +26,12 @@
 
     grdBlue = ctx.createLinearGradient(150.000, 0.000, 150.000, 300.000);
 
-    grdBlue.addColorStop(0.000, 'rgba(0, 165, 255, 1.000)');
+    grdBlue.addColorStop(0.000, 'rgba(0, 165, 255, 0.800)');
     grdBlue.addColorStop(1.000, 'rgba(0, 165, 255, 0.1)');
 
     grdOrange = ctx.createLinearGradient(150.000, 0.000, 150.000, 300.000);
 
-    grdOrange.addColorStop(0.000, 'rgba(255, 116, 53, 1.000)');
+    grdOrange.addColorStop(0.000, 'rgba(255, 116, 53, 0.800)');
     grdOrange.addColorStop(1.000, 'rgba(255, 116, 53, 0.1)');
 
     var chart;
@@ -70,11 +70,26 @@
                     display: false
                 },
                 scales: {
-                    xAxes: [{
-                        display: false,
+                    yAxes: [{
+                        gridLines: {
+                            color: "rgba(255,255,255,0.3)",
+                            borderDash: [1, 4],
+                            drawBorder: false
+                        },
+                        position: "right",
                         ticks: {
-                            maxTicksLimit: 1
+                            fontFamily: "Nunito Sans",
+                            fontSize: "20",
+                            fontColor: "rgba(255,255,255,0.6)",
+                            callback: function (value, index, values) {
+                                return '  ' + value + ' °C';
+                            },
+                            stepSize: 2
                         }
+                    }],
+                    xAxes: [{
+                        display: false
+
                     }]
                 }
             }
