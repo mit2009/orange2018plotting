@@ -1,4 +1,19 @@
-<canvas id="myChart"></canvas>
+<div class="content-container">
+    <div class="title-container">
+        <div class="logo-container"></div>
+        <h2>Live Data Plotting</h2>
+    </div>
+    <div class="canvas-container">
+        <canvas id="myChart"></canvas>
+    </div>
+    <div class="legend-container">
+        <div class="legend-item"><span class="orange circle"></span>Decksuit +
+            <div class="vesta-text"></div>
+        </div>
+        <div class="legend-item"><span class="blue circle"></span>Decksuit</div>
+    </div>
+
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
@@ -25,7 +40,6 @@
         mostRecentData = data;
         console.log(data);
         chart = new Chart(ctx, {
-            // The type of chart we want to create
             type: 'line',
 
             // The data for our dataset
@@ -35,14 +49,14 @@
                     label: "My First dataset",
                     backgroundColor: grdBlue,
                     borderColor: '#00A5FF',
-                    borderWidth: 2,
+                    borderWidth: 3,
                     pointRadius: 0,
                     data: data.noVestaArray,
                 }, {
                     label: "My Second dataset",
                     backgroundColor: grdOrange,
                     borderColor: '#FF7435',
-                    borderWidth: 2,
+                    borderWidth: 3,
                     pointRadius: 0,
                     data: data.hasVestaArray,
                 }]
@@ -50,8 +64,14 @@
 
             // Configuration options go here
             options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                legend: {
+                    display: false
+                },
                 scales: {
                     xAxes: [{
+                        display: false,
                         ticks: {
                             maxTicksLimit: 1
                         }
@@ -70,8 +90,8 @@
     }
 
     setInterval(() => {
-
         $.get('data', (data) => {
+            console.log(chart.data.labels.length);
             if (data.timeArray[data.timeArray.length - 1] != mostRecentData.timeArray[data.timeArray.length - 1]) {
                 addData(chart, data.timeArray[data.timeArray.length - 1], data.noVestaArray[data.noVestaArray.length - 1], data.hasVestaArray[data.hasVestaArray.length - 1])
                 mostRecentData = data;
