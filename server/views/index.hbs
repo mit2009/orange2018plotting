@@ -44,21 +44,21 @@
 
             // The data for our dataset
             data: {
-                labels: data.timeArray,
+                // labels: data.timeArray,
                 datasets: [{
                     label: "My First dataset",
                     backgroundColor: grdBlue,
                     borderColor: '#00A5FF',
                     borderWidth: 3,
                     pointRadius: 0,
-                    data: data.noVestaArray,
+                    // data: data.noVestaArray,
                 }, {
                     label: "My Second dataset",
                     backgroundColor: grdOrange,
                     borderColor: '#FF7435',
                     borderWidth: 3,
                     pointRadius: 0,
-                    data: data.hasVestaArray,
+                    // data: data.hasVestaArray,
                 }]
             },
 
@@ -79,12 +79,12 @@
                         position: "right",
                         ticks: {
                             fontFamily: "Nunito Sans",
-                            fontSize: "20",
+                            fontSize: "24",
                             fontColor: "rgba(255,255,255,0.6)",
                             callback: function (value, index, values) {
                                 return '  ' + value + ' °C';
                             },
-                            stepSize: 2
+                            stepSize: 5
                         }
                     }],
                     xAxes: [{
@@ -106,12 +106,36 @@
 
     setInterval(() => {
         $.get('data', (data) => {
-            console.log(chart.data.labels.length);
+            chartLength = data.timeArray.length
+
+            chart.data.labels = [];
+            chart.data.datasets[0].data = [];
+            chart.data.datasets[1].data = [];
+
+            console.log(chartLength);
+
+            if (chartLength > 30) {
+                for (i = chartLength - 30; i < chartLength; i++) {
+                    chart.data.labels.push(data.timeArray[i])
+                    chart.data.datasets[0].data.push(data.noVestaArray[i])
+                    chart.data.datasets[1].data.push(data.hasVestaArray[i])
+                }
+                console.log(chart.data.labels)
+                console.log(chart.data.datasets[0])
+                console.log(chart.data.datasets[1])
+                chart.update();
+            }
+
+            console.log(data);
+
+            // attempt hack
+            /*
             if (data.timeArray[data.timeArray.length - 1] != mostRecentData.timeArray[data.timeArray.length - 1]) {
                 addData(chart, data.timeArray[data.timeArray.length - 1], data.noVestaArray[data.noVestaArray.length - 1], data.hasVestaArray[data.hasVestaArray.length - 1])
                 mostRecentData = data;
             }
+            */
         })
-    }, 500);
+    }, 1000);
 
 </script>
